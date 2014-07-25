@@ -20,6 +20,7 @@ type SimpleTransport struct {
 
 	// RequestTimeout isn't exact. In the worst case, the actual timeout can come at RequestTimeout * 2.
 	RequestTimeout time.Duration
+	InsecureSkipVerify bool
 }
 
 func (this *SimpleTransport) RoundTrip(req *http.Request) (*http.Response, error) {
@@ -131,10 +132,12 @@ func (this *SimpleTransport) dial(req *http.Request) (net.Conn, error) {
 		if err = c.(*tls.Conn).Handshake(); err != nil {
 			return nil, err
 		}
-
-		if err = c.(*tls.Conn).VerifyHostname(req.URL.Host); err != nil {
+		if !this.InsecureSkipVerify {
+			if err = c.(*tls.Conn).VerifyHostname(req.URL.Host); err != nil {
 			return nil, err
 		}
+		}
+
 	}
 
 	return c, nil
