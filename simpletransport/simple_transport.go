@@ -134,8 +134,8 @@ func (this *SimpleTransport) dial(req *http.Request) (net.Conn, error) {
 		}
 		if !this.InsecureSkipVerify {
 			if err = c.(*tls.Conn).VerifyHostname(req.URL.Host); err != nil {
-			return nil, err
-		}
+				return nil, err
+			}
 		}
 
 	}
